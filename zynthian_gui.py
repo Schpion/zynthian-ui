@@ -74,13 +74,13 @@ try:
 		ctrl_width=int(display_width/4)
 	if not display_height:
 		display_height = top.winfo_screenheight()
-		topbar_height=int(display_height/10)
+		topbar_height=int(display_height/8)
 		ctrl_height=int((display_height-topbar_height)/2)
 except:
 	logging.warning("Can't get screen size. Using default 320x240!")
 	display_width = 320
 	display_height = 240
-	topbar_height=int(display_height/10)
+	topbar_height=int(display_height/8)
 	ctrl_width=int(display_width/4)
 	ctrl_height=int((display_height-topbar_height)/2)
 
@@ -95,7 +95,7 @@ if wiring_layout!="EMULATOR" and wiring_layout!="DUMMIES":
 
 # Fonts
 font_listbox=(font_family,int(1.0*font_size))
-font_topbar=(font_family,int(1.1*font_size))
+font_topbar=(font_family,int(1.4*font_size))
 
 # Loading Logo Animation
 loading_imgs=[]
@@ -347,7 +347,7 @@ class zynthian_gui_controller:
 	def set_title(self, tit):
 		self.title=str(tit)
 		#Calculate the font size ...
-		max_fs=int(1.1*font_size)
+		max_fs=int(1.1*font_size*0.6)
 		words=self.title.split()
 		n_words=len(words)
 		maxnumchar=max([len(w) for w in words])
@@ -678,7 +678,7 @@ class zynthian_selector:
 			justify=tkinter.LEFT,
 			bg=color_header_bg,
 			fg=color_header_tx)
-		self.label_select_path.grid(sticky="wns")
+		self.label_select_path.grid(sticky="wnse")
 		# Setup Topbar's Callback
 		self.label_select_path.bind("<Button-1>", self.cb_topbar)
 
@@ -945,11 +945,11 @@ class zynthian_gui_admin(zynthian_selector):
 				self.list_data.append((self.start_aubionotes,0,"Start Audio -> MIDI"))
 		self.list_data.append((self.test_audio,0,"Test Audio"))
 		self.list_data.append((self.test_midi,0,"Test MIDI"))
-		self.list_data.append((self.update_software,0,"Update Zynthian Software"))
+		#self.list_data.append((self.update_software,0,"Update Zynthian Software"))
 		self.list_data.append((self.update_library,0,"Update Zynthian Library"))
 		#self.list_data.append((self.update_system,0,"Update Operating System"))
 		self.list_data.append((self.restart_gui,0,"Restart GUI"))
-		#self.list_data.append((self.exit_to_console,0,"Exit to Console"))
+		self.list_data.append((self.exit_to_console,0,"Exit to Console"))
 		self.list_data.append((self.reboot,0,"Reboot"))
 		self.list_data.append((self.power_off,0,"Power Off"))
 		super().fill_list()

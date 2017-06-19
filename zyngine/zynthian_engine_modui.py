@@ -182,6 +182,7 @@ class zynthian_engine_modui(zynthian_engine):
 		val=float(zctrl.get_label2value())
 		self.websocket.send("param_set %s %.6f" % (zctrl.graph_path, val))
 		logging.debug("WS << param_set %s %.6f" % (zctrl.graph_path, val))
+		return True
 
 	#----------------------------------------------------------------------------
 	# Websocket & MOD-UI API Management

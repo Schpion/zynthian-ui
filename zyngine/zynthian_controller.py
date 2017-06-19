@@ -118,6 +118,9 @@ class zynthian_controller:
 				self.labels=maxval
 				self.value_max=len(maxval)-1
 
+	def set_midi_chan(self, chan):
+		self.midi_chan=chan
+
 	def get_ctrl_array(self):
 		tit=self.short_name
 		if self.midi_chan:
@@ -152,19 +155,23 @@ class zynthian_controller:
 		# Send value ...
 		if self.engine:
 			try:
-				self.engine.send_controller_value(self)
+				if self.engine.send_controller_value(self):
+					return
+
+				force_sending=True
 			except:
-				if force_sending:
-					try:
-						if self.osc_path:
-							sval=self.get_ctrl_osc_val()
-							liblo.send(self.engine.osc_target,self.osc_path,sval)
-						elif self.midi_cc>0:
-							sval=self.get_ctrl_midi_val()
-							self.engine.zyngui.zynmidi.set_midi_control(self.midi_chan,self.midi_cc,sval)
-						logging.debug("Sending controller '%s' value => %s (%s)" % (self.symbol,val,sval))
-					except:
-						logging.warning("Can't send controller '%s' value" % self.symbol)
+				pass
+			if force_sending:
+				try:
+					if self.osc_path:
+						sval=self.get_ctrl_osc_val()
+						liblo.send(self.engine.osc_target,self.osc_path,sval)
+					elif self.midi_cc>0:
+						sval=self.get_ctrl_midi_val()
+						self.engine.zyngui.zynmidi.set_midi_control(self.midi_chan,self.midi_cc,sval)
+					logging.debug("Sending controller '%s' value => %s (%s)" % (self.symbol,val,sval))
+				except:
+					logging.warning("Can't send controller '%s' value" % self.symbol)
 
 	def get_value2label(self, val):
 		if self.value2label:

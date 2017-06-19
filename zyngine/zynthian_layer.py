@@ -75,6 +75,8 @@ class zynthian_layer:
 	def set_midi_chan(self, midi_chan):
 		self.midi_chan=midi_chan
 		self.engine.set_midi_chan(self)
+		for zctrl in self.controllers_dict.values():
+			zctrl.set_midi_chan(midi_chan)
 
 	def get_midi_chan(self):
 		return self.midi_chan
@@ -85,7 +87,7 @@ class zynthian_layer:
 
 	def load_bank_list(self):
 		self.bank_list=self.engine.get_bank_list(self)
-		logging.debug("BANK LIST => \n%s" % str(self.bank_list))
+		#logging.debug("BANK LIST => \n%s" % str(self.bank_list))
 
 	def reset_bank(self):
 		bank_i=None
@@ -125,7 +127,7 @@ class zynthian_layer:
 	def load_preset_list(self):
 		if self.bank_info:
 			self.preset_list=self.engine.get_preset_list(self.bank_info)
-			logging.debug("PRESET LIST => \n%s" % str(self.preset_list))
+			#logging.debug("PRESET LIST => \n%s" % str(self.preset_list))
 
 	def reset_preset(self):
 		self.preset_i=None
@@ -171,6 +173,7 @@ class zynthian_layer:
 
 	def init_controllers(self):
 		self.controllers_dict=self.engine.get_controllers_dict(self)
+		logging.debug("controllers_dict %s => %d" % (self.engine.name,len(self.controllers_dict)))
 
 	# Create controller screens from zynthian controller keys
 	def init_ctrl_screens(self):
