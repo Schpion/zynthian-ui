@@ -82,9 +82,9 @@ class zynthian_engine_zynaddsubfx(zynthian_engine):
 		self.nickname="ZY"
 
 		if self.config_remote_display():
-			self.command=("/usr/local/bin/zynaddsubfx", "-O", "jack", "-I", "jack", "-P", str(self.osc_target_port), "-a")
+			self.command=("/usr/local/bin/zynaddsubfx", "-b", "64", "-O", "jack", "-I", "jack", "-P", str(self.osc_target_port), "-a")
 		else:
-			self.command=("/usr/local/bin/zynaddsubfx", "-O", "jack", "-I", "jack", "-P", str(self.osc_target_port), "-a", "-U")
+			self.command=("/usr/local/bin/zynaddsubfx", "-b", "64", "-O", "jack", "-I", "jack", "-P", str(self.osc_target_port), "-a", "-U")
 
 		self.conf_dir="./data/zynconf"
 		self.bank_dirs=[

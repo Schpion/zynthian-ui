@@ -97,7 +97,11 @@ class zynthian_engine_linuxsampler(zynthian_engine):
 			('MySFZ', os.getcwd()+"/my-data/soundfonts/sfz"),
 			('MyGIG', os.getcwd()+"/my-data/soundfonts/gig")
 		]
+
+		self.max_voices=20
+		self.max_streams=32
 		self.lscp_v1_6_supported=False
+
 		self.start()
 		self.lscp_connect()
 		self.lscp_get_version()
@@ -366,6 +370,8 @@ class zynthian_engine_linuxsampler(zynthian_engine):
 		# Reset
 		self.lscp_send_single("RESET")
 
+		#self.ls_set_voices(max_voices,max_streams)
+
 		# Config Audio JACK Device 0
 		self.ls_audio_device_id=self.lscp_send_single("CREATE AUDIO_OUTPUT_DEVICE JACK ACTIVE='true' CHANNELS='2' NAME='LinuxSampler' SAMPLERATE='44100'")
 		self.lscp_send_single("SET AUDIO_OUTPUT_CHANNEL_PARAMETER %s 0 NAME='Channel 1'" % self.ls_audio_device_id)
@@ -382,6 +388,10 @@ class zynthian_engine_linuxsampler(zynthian_engine):
 
 		# Global volume level
 		self.lscp_send_single("SET VOLUME 0.45")
+
+	def ls_set_voices(self, voices, streams):
+		self.lscp_send_single("SET VOICES %d" % voices)
+		self.lscp_send_single("SET STREAMS %d" % streams)
 
 	def ls_set_channel(self, layer):
 		# Adding new channel
