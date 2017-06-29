@@ -1372,7 +1372,10 @@ class zynthian_gui_layer(zynthian_selector):
 			for lss in snapshot['layers']:
 				engine=zyngui.screens['engine'].start_engine(lss['engine_nick'],1)
 				self.layers.append(zynthian_layer(engine,lss['midi_chan'],zyngui))
-				self.layers[-1].restore_snapshot(lss)
+				self.layers[-1].restore_preset(lss)
+			sleep(0.5)
+			for k in range(len(self.layers)):
+				self.layers[k].restore_controllers(snapshot['layers'][k])
 			self.fill_list()
 			self.index=snapshot['index']
 			self.select_action(self.index)
@@ -1397,6 +1400,8 @@ class zynthian_gui_layer_options(zynthian_selector):
 		eng=zyngui.screens['layer'].layers[self.layer_index].engine.nickname
 		if eng in ['ZY','LS','FS']:
 			self.list_data.append((self.midi_chan,0,"MIDI Chan"))
+		if eng in ['FS']:
+			self.list_data.append((self.transpose,0,"Transpose"))
 		self.list_data.append((self.remove_layer,0,"Remove Layer"))
 		super().fill_list()
 
@@ -1415,6 +1420,10 @@ class zynthian_gui_layer_options(zynthian_selector):
 		zyngui.screens['midich'].set_mode("SET")
 		zyngui.screens['midich'].index=zyngui.screens['layer'].layers[self.layer_index].midi_chan
 		zyngui.show_modal('midich')
+
+	def transpose(self):
+		zyngui.screens['transp'].index=zyngui.screens['layer'].layers[self.layer_index].transpose-zyngui.screens['transp'].min_val
+		zyngui.show_modal('transp')
 
 	def remove_layer(self):
 		zyngui.screens['layer'].remove_layer(self.layer_index)
@@ -1530,6 +1539,34 @@ class zynthian_gui_midich(zynthian_selector):
 
 	def set_select_path(self):
 		self.select_path.set("MIDI Channel")
+
+#------------------------------------------------------------------------------
+# Zynthian Transpose Selection GUI Class
+#------------------------------------------------------------------------------
+
+class zynthian_gui_transp(zynthian_selector):
+
+	def __init__(self, min_val=-12, max_val=12):
+		self.min_val=min_val
+		self.max_val=max_val
+		super().__init__('Transpose', True)
+
+	def fill_list(self):
+		self.list_data=[]
+		for i in range(self.min_val,self.max_val+1):
+			self.list_data.append((str(i),i,str(i)))
+		super().fill_list()
+
+	def show(self):
+		super().show()
+
+	def select_action(self, i):
+		layer_index=zyngui.screens['layer_options'].layer_index
+		zyngui.screens['layer'].layers[layer_index].set_transpose(self.list_data[i][1])
+		zyngui.show_screen('layer')
+
+	def set_select_path(self):
+		self.select_path.set("Transpose")
 
 #------------------------------------------------------------------------------
 # Zynthian Bank Selection GUI Class
@@ -2008,6 +2045,7 @@ class zynthian_gui:
 		self.screens['layer_options']=zynthian_gui_layer_options()
 		self.screens['engine']=zynthian_gui_engine()
 		self.screens['midich']=zynthian_gui_midich()
+		self.screens['transp']=zynthian_gui_transp()
 		self.screens['bank']=zynthian_gui_bank()
 		self.screens['preset']=zynthian_gui_preset()
 		self.screens['control']=zynthian_gui_control()

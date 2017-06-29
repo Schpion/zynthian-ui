@@ -224,12 +224,12 @@ class zynthian_engine:
 		if self.proc:
 			self.start_loading()
 			try:
-				logging.debug("proc command: "+cmd)
+				#logging.debug("proc command: "+cmd)
 				#self.proc.stdin.write(bytes(cmd + "\n", 'UTF-8'))
 				self.proc.stdin.write(cmd + "\n")
 				self.proc.stdin.flush()
 				out=self.proc_get_lines(tout)
-				logging.debug("proc output:\n%s" % (out))
+				#logging.debug("proc output:\n%s" % (out))
 			except Exception as err:
 				out=""
 				logging.error("Can't exec engine command: %s => %s" % (cmd,err))
@@ -348,6 +348,9 @@ class zynthian_engine:
 	# ---------------------------------------------------------------------------
 
 	def set_midi_chan(self, layer):
+		pass
+
+	def set_transpose(self, layer):
 		pass
 
 	# ---------------------------------------------------------------------------

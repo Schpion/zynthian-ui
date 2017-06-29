@@ -94,6 +94,9 @@ class zynthian_engine_fluidsynth(zynthian_engine):
 	def set_midi_chan(self, layer):
 		self.set_all_midi_routes()
 
+	def set_transpose(self, layer):
+		self.set_all_midi_routes()
+
 	# ---------------------------------------------------------------------------
 	# Bank Management
 	# ---------------------------------------------------------------------------
@@ -165,9 +168,9 @@ class zynthian_engine_fluidsynth(zynthian_engine):
 	# MIDI Channel Management
 	# ---------------------------------------------------------------------------
 
-	def set_midi_channel(self, layer):
-		if layer.part_i is not None:
-			liblo.send(self.osc_target, "/part%d/Prcvchn" % layer.part_i, layer.get_midi_chan())
+	#def set_midi_channel(self, layer):
+	#	if layer.part_i is not None:
+	#		liblo.send(self.osc_target, "/part%d/Prcvchn" % layer.part_i, layer.get_midi_chan())
 
 	def unload_unused_soundfonts(self):
 		#Make a copy of soundfont index and remove used soundfonts
@@ -186,7 +189,8 @@ class zynthian_engine_fluidsynth(zynthian_engine):
 	def set_layer_midi_routes(self, layer):
 		if layer.part_i is not None:
 			midich=layer.get_midi_chan()
-			self.proc_cmd("router_begin note\nrouter_chan %d %d 0 %d\nrouter_end" % (midich,midich,layer.part_i))
+			transp=layer.get_transpose()
+			self.proc_cmd("router_begin note\nrouter_chan %d %d 0 %d\nrouter_par1 0 127 1 %d\nrouter_end" % (midich,midich,layer.part_i,transp))
 			self.proc_cmd("router_begin cc\nrouter_chan %d %d 0 %d\nrouter_end" % (midich,midich,layer.part_i))
 			self.proc_cmd("router_begin pbend\nrouter_chan %d %d 0 %d\nrouter_end" % (midich,midich,layer.part_i))
 			self.proc_cmd("router_begin prog\nrouter_chan %d %d 0 %d\nrouter_end" % (midich,midich,layer.part_i))

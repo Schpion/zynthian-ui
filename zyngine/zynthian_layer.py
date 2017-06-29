@@ -37,6 +37,9 @@ class zynthian_layer:
 		self.zyngui=zyngui
 		self.engine=engine
 		self.midi_chan=midi_chan
+		self.transpose=0
+		self.min_note=0
+		self.max_note=127
 
 		self.bank_list=[]
 		self.bank_index=0
@@ -80,6 +83,13 @@ class zynthian_layer:
 
 	def get_midi_chan(self):
 		return self.midi_chan
+
+	def set_transpose(self, transpose):
+		self.transpose=transpose
+		self.engine.set_transpose(self)
+
+	def get_transpose(self):
+		return self.transpose
 
 	# ---------------------------------------------------------------------------
 	# Bank Management
@@ -173,7 +183,6 @@ class zynthian_layer:
 
 	def init_controllers(self):
 		self.controllers_dict=self.engine.get_controllers_dict(self)
-		logging.debug("controllers_dict %s => %d" % (self.engine.name,len(self.controllers_dict)))
 
 	# Create controller screens from zynthian controller keys
 	def init_ctrl_screens(self):
@@ -251,7 +260,7 @@ class zynthian_layer:
 			snapshot['controllers_dict'][k]=self.controllers_dict[k].value
 		return snapshot
 
-	def restore_snapshot(self, snapshot):
+	def restore_preset(self, snapshot):
 		#Constructor, including engine and midi_chan info is called before
 		#self.set_midi_chan(snapshot['midi_chan'])
 		self.load_bank_list()
@@ -260,11 +269,11 @@ class zynthian_layer:
 		self.load_preset_list()
 		self.set_preset_by_name(snapshot['preset_name'])
 		#Wait for preset loading
+
+	def restore_controllers(self, snapshot):
 		if self.refresh_flag:
 			self.refresh_flag=False
 			self.refresh_controllers()
-		else:
-			sleep(0.5)
 		self.ctrl_screen_active=snapshot['ctrl_screen_active']
 		for k in snapshot['controllers_dict']:
 			self.controllers_dict[k].set_value(snapshot['controllers_dict'][k],True)
