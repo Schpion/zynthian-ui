@@ -307,5 +307,12 @@ class zynthian_layer:
 			path=path + "/" + self.preset_name
 		return path
 
+	def get_displaypath(self):
+		path=self.get_basepath()
+		if self.preset_name:
+			path=path + " > " + self.preset_name
+		if self.bank_name:
+			path=path + " (" + self.bank_name + ")"
+		return path
 
 #******************************************************************************
