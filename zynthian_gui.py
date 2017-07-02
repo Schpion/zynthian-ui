@@ -1184,10 +1184,7 @@ class zynthian_gui_snapshot(zynthian_selector):
 		self.show()
 		
 	def get_new_fpath(self):
-		try:
-			n=int(self.list_data[-1][2][3:])
-		except:
-			n=0;
+		n=max(map(lambda item: int(item[2]) if item[2].isdigit() else 0, self.list_data))
 		fname='{0:04d}'.format(n+1) + '.zss'
 		fpath=join(self.snapshot_dir,fname)
 		return fpath
@@ -1378,7 +1375,11 @@ class zynthian_gui_layer(zynthian_selector):
 				self.layers[k].restore_controllers(snapshot['layers'][k])
 			self.fill_list()
 			self.index=snapshot['index']
-			self.select_action(self.index)
+			if self.list_data[self.index][0] in ('NEW','RESET'):
+				self.index=0
+				zyngui.show_screen('layer')
+			else:
+				self.select_action(self.index)
 			zyngui.screens['engine'].clean_unused_engines()
 		except Exception as e:
 			logging.error("Invalid snapshot format: %s" % e)
