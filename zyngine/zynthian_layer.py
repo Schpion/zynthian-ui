@@ -247,6 +247,9 @@ class zynthian_layer:
 			'engine_name': self.engine.name,
 			'engine_nick': self.engine.nickname,
 			'midi_chan': self.midi_chan,
+			'transpose': self.transpose,
+			'min_note': self.min_note,
+			'max_note': self.max_note,
 			'bank_index': self.bank_index,
 			'bank_name': self.bank_name,
 			'bank_info': self.bank_info,
@@ -263,6 +266,9 @@ class zynthian_layer:
 	def restore_preset(self, snapshot):
 		#Constructor, including engine and midi_chan info is called before
 		#self.set_midi_chan(snapshot['midi_chan'])
+		self.transpose=snapshot.get('transpose', 0)
+		self.min_note=snapshot.get('min_note', 0)
+		self.max_note=snapshot.get('max_note', 127)
 		self.load_bank_list()
 		self.set_bank_by_name(snapshot['bank_name'])
 		#Wait for bank loading, zcontrols generation
