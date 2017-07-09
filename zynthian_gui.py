@@ -1288,7 +1288,7 @@ class zynthian_gui_layer(zynthian_selector):
 
 	def add_layer_midich(self, midich, select=True):
 		if self.add_layer_eng:
-			self.layers.append(zynthian_layer(self.add_layer_eng,midich,zyngui))
+			self.layers.append(zynthian_layer(self.add_layer_eng,zyngui,midi_chan=midich))
 			self.fill_list()
 			if select:
 				self.index=len(self.layers)-1
@@ -1368,7 +1368,7 @@ class zynthian_gui_layer(zynthian_selector):
 			self.remove_all_layers(False)
 			for lss in snapshot['layers']:
 				engine=zyngui.screens['engine'].start_engine(lss['engine_nick'],1)
-				self.layers.append(zynthian_layer(engine,lss['midi_chan'],zyngui))
+				self.layers.append(zynthian_layer(engine,zyngui,snapshot=lss))
 				self.layers[-1].restore_preset(lss)
 			sleep(0.5)
 			for k in range(len(self.layers)):

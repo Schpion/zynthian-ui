@@ -33,7 +33,7 @@ class zynthian_layer:
 	# Initialization
 	# ---------------------------------------------------------------------------
 
-	def __init__(self, engine, midi_chan, zyngui=None):
+	def __init__(self, engine, zyngui=None, midi_chan=0, snapshot=None):
 		self.zyngui=zyngui
 		self.engine=engine
 		self.midi_chan=midi_chan
@@ -56,6 +56,12 @@ class zynthian_layer:
 		self.ctrl_screen_active=None
 
 		self.refresh_flag=False
+
+		if snapshot is not None:
+			self.midi_chan=snapshot.get('midi_chan', 0)
+			self.transpose=snapshot.get('transpose', 0)
+			self.min_note=snapshot.get('min_note', 0)
+			self.max_note=snapshot.get('max_note', 127)
 
 		self.engine.add_layer(self)
 		self.refresh_controllers()
@@ -265,10 +271,6 @@ class zynthian_layer:
 
 	def restore_preset(self, snapshot):
 		#Constructor, including engine and midi_chan info is called before
-		#self.set_midi_chan(snapshot['midi_chan'])
-		self.transpose=snapshot.get('transpose', 0)
-		self.min_note=snapshot.get('min_note', 0)
-		self.max_note=snapshot.get('max_note', 127)
 		self.load_bank_list()
 		self.set_bank_by_name(snapshot['bank_name'])
 		#Wait for bank loading, zcontrols generation
