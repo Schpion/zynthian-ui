@@ -2146,6 +2146,31 @@ class zynthian_gui:
 			else:
 				sleep(0.1)
 
+	def back(self):
+		# If in controller map selection, back to instrument control
+		if self.active_screen=='control' and self.screens['control'].mode=='select':
+			self.screens['control'].set_mode_control()
+		else:
+			# If modal screen, back to active screen
+			if self.modal_screen:
+				if self.modal_screen=='info':
+					self.screens['admin'].kill_command()
+				screen_back=self.active_screen
+				logging.debug("CLOSE MODAL => " + self.modal_screen)
+			# Else, go back to screen-1
+			else:
+				j=self.screens_sequence.index(self.active_screen)-1
+				if j<0: j=1
+				screen_back=self.screens_sequence[j]
+			# If there is only one preset, go back to bank selection
+			if screen_back=='preset' and len(self.curlayer.preset_list)<=1:
+				screen_back='bank'
+			# If there is only one bank, go back to layer selection
+			if screen_back=='bank' and len(self.curlayer.bank_list)<=1:
+				screen_back='layer'
+			logging.debug("BACK TO SCREEN => "+screen_back)
+			self.show_screen(screen_back)
+
 	# -------------------------------------------------------------------
 	# Switches
 	# -------------------------------------------------------------------
@@ -2185,9 +2210,9 @@ class zynthian_gui:
 		elif i==1:
 			self.show_screen('admin')
 		elif i==2:
-			pass
+			self.save_snapshot()
 		elif i==3:
-			self.screens['admin'].power_off()
+			pass
 		self.stop_loading()
 
 	def zynswitch_bold(self,i):
@@ -2198,7 +2223,7 @@ class zynthian_gui:
 		elif i==1 and self.active_screen!='bank':
 			self.show_screen('bank')
 		elif i==2:
-			self.save_snapshot()
+			pass
 		elif i==3:
 			if self.active_screen=='layer':
 				self.show_modal('layer_options')
@@ -2220,34 +2245,12 @@ class zynthian_gui:
 			else:
 				self.zynswitch_bold(i)
 		elif i==1:
-			# If in controller map selection, back to instrument control
-			if self.active_screen=='control' and self.screens['control'].mode=='select':
-				self.screens['control'].set_mode_control()
-			else:
-				# If modal screen, back to active screen
-				if self.modal_screen:
-					if self.modal_screen=='info':
-						self.screens['admin'].kill_command()
-					screen_back=self.active_screen
-					logging.debug("CLOSE MODAL => " + self.modal_screen)
-				# Else, go back to screen-1
-				else:
-					j=self.screens_sequence.index(self.active_screen)-1
-					if j<0: j=1
-					screen_back=self.screens_sequence[j]
-				# If there is only one preset, go back to bank selection
-				if screen_back=='preset' and len(self.curlayer.preset_list)<=1:
-					screen_back='bank'
-				# If there is only one bank, go back to layer selection
-				if screen_back=='bank' and len(self.curlayer.bank_list)<=1:
-					screen_back='layer'
-				logging.debug("BACK TO SCREEN => "+screen_back)
-				self.show_screen(screen_back)
+			self.back()
 		elif i==2:
 			if self.modal_screen!='snapshot':
 				self.load_snapshot()
 			else:
-				self.screens['snapshot'].next()
+				self.back()
 		elif i==3:
 			if self.modal_screen:
 				self.screens[self.modal_screen].switch_select()
