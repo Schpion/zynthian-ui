@@ -76,3 +76,15 @@ class zynthian_zcmidi:
 
 	def get_midi_preset(self, chan):
 		return [self.bank_msb_selected[chan],self.bank_lsb_selected[chan],self.prg_selected[chan]]
+
+	def set_midi_rpn(self, chan, rpn, data)
+		#self.lib_zyncoder.zynmidi_set_rpn(chan, rpn, data)
+		self.lib_zyncoder.zynmidi_set_control(chan, 0x65, (rpn>>7)&0x7F)
+		self.lib_zyncoder.zynmidi_set_control(chan, 0x64, (rpn)&0x7F)
+		self.lib_zyncoder.zynmidi_set_control(chan, 0x06, (data>>7)&0x7F)
+		self.lib_zyncoder.zynmidi_set_control(chan, 0x26, (data)&0x7F)
+
+	def reset_midi_rpn(self, chan)
+		#self.lib_zyncoder.zynmidi_set_rpn(chan, 0x3FFF, 0)
+		self.lib_zyncoder.zynmidi_set_control(chan, 0x65, 0x7F)
+		self.lib_zyncoder.zynmidi_set_control(chan, 0x64, 0x7F)

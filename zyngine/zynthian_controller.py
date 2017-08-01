@@ -48,6 +48,7 @@ class zynthian_controller:
 
 		self.midi_chan=None
 		self.midi_cc=None
+		self.midi_rpn=None
 		self.osc_port=None
 		self.osc_path=None
 		self.graph_path=None
@@ -78,6 +79,8 @@ class zynthian_controller:
 			self.midi_chan=options['midi_chan']
 		if 'midi_cc' in options:
 			self.midi_cc=options['midi_cc']
+		if 'midi_rpn' in options:
+			self.midi_rpn=options['midi_rpn']
 		if 'osc_port' in options:
 			self.osc_port=options['osc_port']
 		if 'osc_path' in options:
@@ -166,6 +169,9 @@ class zynthian_controller:
 					if self.osc_path:
 						sval=self.get_ctrl_osc_val()
 						liblo.send(self.engine.osc_target,self.osc_path,sval)
+					elif self.midi_rpn is not None:
+						sval=self.value
+						self.engine.zyngui.zynmidi.set_midi_rpn(self.midi_chan,self.midi_rpn,sval)
 					elif self.midi_cc>0:
 						sval=self.get_ctrl_midi_val()
 						self.engine.zyngui.zynmidi.set_midi_control(self.midi_chan,self.midi_cc,sval)
